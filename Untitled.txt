@@ -1,0 +1,906 @@
+Assignment - 1
+1. Caesar Cipher
+Theory:
+
+One of the simplest and oldest encryption techniques.
+
+Each letter in the plaintext is shifted a fixed number of positions down the alphabet.
+
+E.g., with a shift of 3: A → D, B → E, ..., X → A, Y → B, Z → C.
+
+It is a monoalphabetic cipher, meaning each letter maps to one unique other letter.
+
+2. Vigenère Cipher
+Theory:
+
+A polyalphabetic cipher, improving security over Caesar.
+
+Uses a key (a word), where each letter in the key defines a Caesar shift for the corresponding letter in the text.
+
+The key repeats itself if shorter than the text.
+
+E.g., key = “LEMON”, text = “ATTACK”, would be encrypted using successive Caesar ciphers determined by L, E, M, O, N.
+
+3. Playfair Cipher
+Theory:
+
+A digraph (pair of letters) substitution cipher.
+
+Uses a 5x5 matrix filled with letters from a keyword, followed by the rest of the alphabet (I and J are usually combined).
+
+Rules for encryption:
+
+Same row: Replace each letter with the letter to its right.
+
+Same column: Replace each letter with the one below it.
+
+Rectangle: Replace letters with those at the opposite corners of the rectangle formed.
+
+Padding with 'X' is added if there's an odd number of letters.
+
+4. Hill Cipher
+Theory:
+
+A linear algebra-based cipher that encrypts blocks of text using matrix multiplication.
+
+A square matrix (key) is multiplied with vectors of plaintext letters.
+
+Uses modular arithmetic mod 26.
+
+Decryption requires computing the modular inverse of the key matrix.
+
+🧠 Code Explanation
+Caesar Cipher
+python
+Copy
+Edit
+def caesar_cipher(text, shift, mode):
+    ...
+Shifts alphabets and digits.
+
+For letters, it adjusts their Unicode position and wraps around using modulo 26.
+
+For digits, it wraps using modulo 10.
+
+Vigenère Cipher
+python
+Copy
+Edit
+def vigenere_cipher(text, key, mode):
+    ...
+Each character is shifted based on the corresponding character in the key.
+
+The key wraps around if shorter than the text.
+
+Handles both encryption and decryption.
+
+Playfair Cipher
+python
+Copy
+Edit
+def playfair_cipher(text, key, mode):
+    ...
+Uses a matrix of 5x5 characters.
+
+Pairs up characters and encrypts them using rules based on their positions.
+
+Helper functions:
+
+prepare_text(): Cleans the input.
+
+generate_matrix(): Creates the key matrix.
+
+find_position(): Locates character coordinates in matrix.
+
+Hill Cipher
+python
+Copy
+Edit
+def hill_cipher_encrypt(plaintext, key_matrix):
+    ...
+Converts letters to numbers.
+
+Chunks the plaintext into blocks of the size equal to the matrix dimensions.
+
+Multiplies each block by the key matrix and takes mod 26.
+
+python
+Copy
+Edit
+def hill_cipher_decrypt(ciphertext, key_matrix):
+    ...
+Finds the modular inverse of the determinant.
+
+Computes the adjugate matrix, then uses it to decrypt ciphertext blocks.
+
+Main Menu
+python
+Copy
+Edit
+def main():
+    ...
+Presents the user with a menu to choose the cipher.
+
+Accepts input, performs encryption and decryption, and shows the results.
+
+Hardcodes Hill Cipher matrix for simplicity (should ideally be user-input)
+Cipher	Technique	Strengths	Weaknesses
+Caesar	Monoalphabetic shift	Simple, fast	Easily breakable via brute force
+Vigenère	Polyalphabetic	Harder to break, uses keyword	Repeating key is vulnerable
+Playfair	Digraph substitution	Stronger than monoalphabetic	Matrix construction is manual
+Hill	Linear algebra (matrix)	High diffusion, block cipher	Requires invertible matrix
+
+🔐 Real-life Applications of Classical Ciphers
+
+Cipher	Application Area	Description
+Caesar	Historical Military Use	Used by Julius Caesar for secure army communication.
+Puzzle Design & Educational Tools	Common in cryptography puzzles, escape rooms, and beginner crypto learning.
+Lightweight Obfuscation	Used for simple data hiding (e.g., kids’ apps, text-based games).
+Vigenère	Historical Government Encryption	Used by governments before WWII for classified communication.
+Cryptographic Education	Teaches principles of polyalphabetic substitution.
+Cipher-based Competitions	Popular in CTF (Capture The Flag) challenges and cybersecurity quizzes.
+Playfair	Manual Cipher Systems (WWI & WWII)	Used by British forces for secure messaging without machines.
+Steganography	Incorporated in message hiding and historical spy techniques.
+Board Games / Puzzles	Found in puzzles requiring digraph manipulation.
+Hill	Cryptography Research & Teaching	Useful for learning linear algebra in cryptographic contexts.
+Basis for Modern Block Ciphers	Inspiration for matrix-based encryption systems (e.g., AES uses matrix ops).
+Secure Message Transmission (when matrix is secret)	Can be used in niche communication with shared keys for matrix encryption.
+
+Assignment - 2
+✅ 1. Theory of Transposition Ciphers
+Transposition ciphers rearrange the characters of the plaintext instead of substituting them.
+
+🔷 A. Row-Column Transposition Cipher
+A block of text is written row-wise into a matrix.
+
+The characters are read column-wise using a key that represents the column permutation order.
+
+Example:
+
+Plaintext: HELLO WORLD
+Key: 3 1 2 → mapped to indices [2, 0, 1]
+Matrix:
+
+mathematica
+Copy
+Edit
+H E L  
+L O W  
+O R L  
+D - -
+Rearrange columns based on key to encrypt.
+
+🔷 B. Rail Fence Cipher
+A zig-zag pattern is used to write characters across a set number of “rails” (rows).
+
+Read row-by-row to get the ciphertext.
+
+Example:
+
+mathematica
+Copy
+Edit
+HELLO WORLD with 3 rails:
+
+H . . . O . . . R  
+. E . L . W . L .  
+. . L . . . O . D  
+
+Encrypted: HORELWLLD
+🧠 2. Explanation of the Python Code
+🔹 Row-Column Transposition Cipher
+✅ row_column_transposition_encrypt(text, key)
+Sanitize text – remove spaces/symbols and convert to uppercase.
+
+Create a matrix based on rows × cols.
+
+Fill the matrix row-wise.
+
+Read column-wise based on the key's order (sorted).
+
+Return encrypted text.
+
+✅ row_column_transposition_decrypt(encrypted_text, key)
+Determine matrix size.
+
+Fill the matrix column-wise in the sorted key order.
+
+Read the matrix row-wise to get the decrypted message.
+
+🔹 Rail Fence Cipher
+✅ rail_fence_encrypt(text, key)
+Create empty strings for each rail.
+
+Traverse the text in a zigzag pattern (top to bottom and back).
+
+Append characters to each rail.
+
+Concatenate rails to form ciphertext.
+
+✅ rail_fence_decrypt(encrypted_text, key)
+Generate a zigzag pattern to mark where each character will go.
+
+Fill marked positions with characters from encrypted text.
+
+Traverse pattern again to read plaintext.
+
+🔄 3. Advantages & Disadvantages
+
+Cipher	Advantages	Disadvantages
+Row-Column Transposition	- Easy to implement
+- Harder to crack than simple substitution	- Requires knowledge of key length and order
+- Vulnerable to pattern attacks
+Rail Fence	- Simple and fast
+- Doesn’t need complex math	- Easy to break with brute-force
+- Not secure for long messages
+🌍 4. Real-life Applications (Table)
+
+Cipher	Application Area	Description
+Row-Column Transposition	Military (WWI/WWII), Historical Messaging	Used in military ciphers due to simplicity and lack of need for complex devices.
+Educational Tools	Demonstrates the effect of permutations in cryptography courses.
+Puzzle/Spy Games	Common in escape rooms and cryptographic games.
+Rail Fence Transposition	Early Military Communication	Used for sending simple messages over insecure lines.
+CTFs & Cryptographic Competitions	Frequently used in Capture The Flag (CTF) events for cryptanalysis.
+Educational Visualizations	Teaches concepts of zigzag and patterns in encoding.
+
+Assignment - 3
+
+✅ 1. Theory: DES (Data Encryption Standard)
+DES is a symmetric-key block cipher developed in the 1970s by IBM and adopted by NIST. It was one of the earliest encryption standards for securing data.
+
+🔷 Key Characteristics:
+
+Property	Description
+Block Size	64 bits (8 bytes)
+Key Size	56 bits (plus 8 bits for parity = 64 bits total)
+Mode	Often used in modes like ECB, CBC, CFB, OFB
+Rounds	16 rounds of Feistel network
+Encryption Type	Symmetric (same key for encryption and decryption)
+🔷 Modes of Operation:
+This code uses CBC (Cipher Block Chaining) mode:
+
+IV (Initialization Vector) is used for the first block.
+
+Each subsequent block is XORed with the previous ciphertext block before being encrypted.
+
+🔐 DES in CBC Mode:
+mathematica
+Copy
+Edit
+C1 = E(K, P1 ⊕ IV)
+C2 = E(K, P2 ⊕ C1)
+C3 = E(K, P3 ⊕ C2)
+...
+🧠 2. Explanation of the Code
+python
+Copy
+Edit
+!pip install pycryptodome
+Installs the pycryptodome package – a drop-in replacement for pycrypto.
+
+🔐 Key Generation
+python
+Copy
+Edit
+def generate_des_key():
+    return os.urandom(8)  # 8 bytes = 64 bits
+DES requires a 64-bit key.
+
+os.urandom(8) creates a secure random 8-byte key.
+
+📁 File Encryption
+python
+Copy
+Edit
+def encrypt_file(input_filename, output_filename, key):
+    cipher = DES.new(key, DES.MODE_CBC)  # DES with CBC mode
+    iv = cipher.iv  # initialization vector
+DES.new() creates a DES cipher in CBC mode.
+
+cipher.iv is automatically generated IV (8 bytes).
+
+python
+Copy
+Edit
+with open(input_filename, 'rb') as f:
+    plaintext = f.read()
+
+padded_text = pad(plaintext, DES.block_size)
+ciphertext = cipher.encrypt(padded_text)
+Read the input file.
+
+pad() ensures the text is a multiple of 8 bytes (DES block size).
+
+Encrypt the padded plaintext.
+
+python
+Copy
+Edit
+with open(output_filename, 'wb') as f:
+    f.write(iv + ciphertext)  # Prepend IV for later decryption
+Store the IV + ciphertext in the encrypted file.
+
+This allows the decryption function to extract the correct IV.
+
+🔓 File Decryption
+python
+Copy
+Edit
+def decrypt_file(input_filename, output_filename, key):
+    with open(input_filename, 'rb') as f:
+        iv = f.read(8)
+        ciphertext = f.read()
+First 8 bytes = IV.
+
+The rest = encrypted data.
+
+python
+Copy
+Edit
+cipher = DES.new(key, DES.MODE_CBC, iv)
+decrypted_text = unpad(cipher.decrypt(ciphertext), DES.block_size)
+Reconstruct cipher with the same IV and key.
+
+Decrypt and unpad the data.
+
+python
+Copy
+Edit
+with open(output_filename, 'wb') as f:
+    f.write(decrypted_text)
+Write the decrypted content to a new file.
+
+🧪 Testing the Code
+python
+Copy
+Edit
+key = generate_des_key()
+encrypt_file("input.txt", "encrypted.bin", key)
+decrypt_file("encrypted.bin", "decrypted.txt", key)
+Generates a key.
+
+Encrypts the file input.txt → encrypted.bin
+
+Decrypts encrypted.bin → decrypted.txt
+
+python
+Copy
+Edit
+with open("encrypted.bin","rb") as f:
+  data = f.read(100)
+  print(data)
+Reads and prints the first 100 bytes of the encrypted file.
+
+✅ 3. Advantages and Disadvantages of DES
+
+Advantages	Disadvantages
+Easy to understand and implement	Small key size (56 bits) makes it vulnerable to brute force
+Was a standard and widely adopted	Outdated and no longer secure for modern applications
+Useful for educational and experimental setups	Replaced by AES and 3DES for modern secure applications
+🌍 4. Applications of DES (Tabular Format)
+
+Application Area	Use Case Description
+Historical Banking Systems	Used for securing ATM transactions and PIN encryptions in early banking systems
+Smart Card Encryption	Some smart card applications used DES for access control and authentication
+Data Protection in Legacy Systems	Older government and military systems still maintain DES for compatibility reasons
+Hardware Security Modules (HSMs)	Used for key management and encryption in physical HSM devices in the past
+Educational Demonstration	Still used today to demonstrate block cipher concepts in universities
+Would you like this explanation as a PDF handout or report format for academic use or documentation?
+
+
+
+
+
+
+
+You said:
+how does des work 
+
+
+ChatGPT said:
+Great question! Let’s walk through how DES (Data Encryption Standard) works in detail. It’s a classic block cipher and a great example of how symmetric encryption algorithms operate.
+
+🔐 Overview: What is DES?
+DES is a symmetric key block cipher developed by IBM in the 1970s and adopted as a federal standard by the NIST in 1977.
+
+It encrypts data in blocks of 64 bits using a 56-bit key (plus 8 parity bits, making it 64 bits total).
+
+DES performs 16 rounds of substitution and permutation (known as a Feistel network).
+
+🧩 DES Architecture (Simplified)
+🔄 Step-by-Step Working of DES:
+
+Step	Operation	Description
+1.	Initial Permutation (IP)	Reorders the 64-bit plaintext using a fixed permutation table.
+2.	Split into Left and Right	The permuted data is split into two halves: L0 and R0, each 32 bits.
+3.	16 Rounds of Feistel Cipher	Each round uses a subkey (derived from the main key). Operates like:
+Li = Ri-1
+Ri = Li-1 XOR F(Ri-1, Ki)
+4.	Function F	Key part of each round. It does:
+➤ Expansion of R (32 bits → 48 bits)
+➤ XOR with 48-bit subkey
+➤ Substitution using S-boxes
+➤ Permutation
+5.	Combine Final R and L	After 16 rounds, combine R16 and L16 (note they are swapped!)
+6.	Final Permutation (FP)	Applies the inverse of the initial permutation (IP⁻¹) to get ciphertext.
+🔄 Feistel Round (One Round in Detail)
+Inputs:
+32-bit Right Half (R)
+
+48-bit Round Subkey (K)
+
+Steps:
+Expansion: Expand R from 32 to 48 bits using an expansion table.
+
+XOR: XOR with the 48-bit subkey.
+
+Substitution: Use 8 S-boxes, each replacing 6-bit input with a 4-bit output → total 32 bits.
+
+Permutation: Apply a permutation to the 32 bits.
+
+XOR with Left Half: This becomes the new right half.
+
+🔑 Key Schedule (How Subkeys Are Made)
+Start with a 64-bit key (only 56 bits are used; 8 bits are parity).
+
+Apply permuted choice 1 (PC-1) to reduce it to 56 bits.
+
+Split into two 28-bit halves.
+
+For each round, rotate the halves and apply PC-2 to get a 48-bit subkey.
+
+🔁 Summary of DES Flow
+text
+Copy
+Edit
+Plaintext (64 bits)
+      ↓
+Initial Permutation (IP)
+      ↓
+L0, R0 (split)
+      ↓
+16 rounds of Feistel cipher
+      ↓
+R16, L16 (note swap!)
+      ↓
+Final Permutation (FP)
+      ↓
+Ciphertext (64 bits)
+
+Assignment - 4
+AES is a symmetric block cipher, meaning the same key is used for both encryption and decryption. It operates on fixed block sizes of 128 bits (16 bytes) and supports key sizes of 128, 192, or 256 bits.
+
+🔄 AES Working Process:
+Plaintext → divided into 16-byte blocks.
+
+Each block goes through several rounds (10 for 128-bit key).
+
+Rounds involve:
+
+SubBytes (substitution)
+
+ShiftRows (row-wise shifting)
+
+MixColumns (column-wise mixing)
+
+AddRoundKey (XOR with round key)
+
+Modes of AES:
+ECB: Not secure (repetitive patterns)
+
+✅ CBC (Cipher Block Chaining): Secure and widely used (each block depends on the previous one and an IV)
+
+📄 Code Explanation: AES File Encryption using CBC Mode
+🔹 Step 1: Required Libraries
+python
+Copy
+Edit
+!pip install pycryptodome
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+from Crypto.Random import get_random_bytes
+pycryptodome is a cryptographic library for Python.
+
+AES provides the encryption algorithm.
+
+pad/unpad handles data that isn’t a multiple of 16 bytes.
+
+get_random_bytes is used to create secure keys and IVs.
+
+🔹 Step 2: Define AES Block Size
+python
+Copy
+Edit
+BLOCK_SIZE = 16  # AES block size is 16 bytes
+🔹 Step 3: Encryption Function
+python
+Copy
+Edit
+def encrypt_file(input_file, output_file, key):
+Takes input file, output file, and a 16-byte key.
+
+Uses CBC mode and a random IV (Initialization Vector).
+
+python
+Copy
+Edit
+    iv = get_random_bytes(BLOCK_SIZE)
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+A random IV ensures each encryption is unique, even for the same data.
+
+The AES cipher is initialized using the key and IV.
+
+python
+Copy
+Edit
+    with open(input_file, "rb") as f:
+        plaintext = f.read()
+Read the contents of the input file in binary mode.
+
+python
+Copy
+Edit
+    padded_data = pad(plaintext, BLOCK_SIZE)
+Pads the data to be a multiple of 16 bytes (AES requirement).
+
+python
+Copy
+Edit
+    ciphertext = cipher.encrypt(padded_data)
+Encrypts the padded data.
+
+python
+Copy
+Edit
+    with open(output_file, "wb") as f:
+        f.write(iv + ciphertext)
+Writes the IV + ciphertext to the output file.
+
+🔹 Step 4: Decryption Function
+python
+Copy
+Edit
+def decrypt_file(input_file, output_file, key):
+Takes encrypted file, decrypts it using same key + extracted IV.
+
+python
+Copy
+Edit
+    with open(input_file, "rb") as f:
+        iv = f.read(BLOCK_SIZE)
+        ciphertext = f.read()
+Reads first 16 bytes as IV.
+
+Remaining data is ciphertext.
+
+python
+Copy
+Edit
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    decrypted_data = unpad(cipher.decrypt(ciphertext), BLOCK_SIZE)
+AES decrypts the ciphertext using the key and IV.
+
+Unpad to remove padding added during encryption.
+
+python
+Copy
+Edit
+    with open(output_file, "wb") as f:
+        f.write(decrypted_data)
+Writes the decrypted data to the output file.
+
+🔹 Step 5: Example Execution
+python
+Copy
+Edit
+key = get_random_bytes(16)
+encrypt_file("input.txt", "encrypted_aes.bin", key)
+decrypt_file("encrypted_aes.bin", "decrypted_aes.txt", key)
+A random 16-byte key is generated.
+
+The file is encrypted and saved as .bin.
+
+Then decrypted and saved as .txt.
+
+python
+Copy
+Edit
+with open("encrypted_aes.bin","rb") as f:
+  data = f.read(100)
+  print(data)
+Reads the first 100 bytes of encrypted output to view IV and partial ciphertext.
+
+✅ Advantages of AES:
+
+Feature	Benefit
+Strong Security	AES is secure against all known attacks.
+Fast	Efficient in both software and hardware.
+Flexible	Supports multiple key sizes (128/192/256-bit).
+Widely Supported	Used globally in various applications.
+❌ Disadvantages of AES:
+
+Issue	Description
+Symmetric Key Management	Secure sharing/storage of the key is essential.
+IV Requirement	IV must be random and unique (not secret, but critical).
+📊 Real-Life Applications of AES
+
+Application Area	Description
+Banking & Finance	Secure transactions and ATM communications.
+File/Email Encryption	Protects personal and sensitive documents.
+Cloud Storage	Encrypts files before uploading to services like Google Drive.
+Wi-Fi Security (WPA2)	Used to secure wireless networks.
+Messaging Apps	Used in apps like WhatsApp, Signal for E2E encryption.
+Military & Government	Protects classified communications and files.
+
+Assignment - 5
+1. Modular Exponentiation (power function)
+python
+Copy
+Edit
+def power(base, expo, m):
+    """Performs modular exponentiation."""
+    res = 1
+    base = base % m
+    while expo > 0:
+        if expo & 1:
+            res = (res * base) % m
+        base = (base * base) % m
+        expo = expo // 2
+    return res
+This function performs modular exponentiation, which is essential for both encryption and decryption in RSA. It efficiently computes the result of (base^expo) % m using the method of exponentiation by squaring. This approach allows large exponents to be computed more efficiently in logarithmic time.
+
+base % m ensures that the base is within the modulus m to prevent overflow.
+
+The loop continuously squares the base and reduces the exponent by half, handling the odd/even exponents by multiplying the result when the exponent is odd (expo & 1).
+
+2. Modular Inverse (modInverse function)
+python
+Copy
+Edit
+def modInverse(e, phi):
+    for d in range(2, phi):
+        if (e * d) % phi == 1:
+            return d
+    return -1
+This function calculates the modular inverse of e modulo phi(n) (i.e., finding d such that (e * d) % phi(n) == 1). In the RSA algorithm, d is the private key, and it must satisfy the condition e * d ≡ 1 (mod φ(n)).
+
+The function uses a brute-force method (looping through possible values of d) to find d. However, this can be slow for large numbers.
+
+A more efficient approach, such as the Extended Euclidean Algorithm, can be used to find the modular inverse.
+
+3. RSA Key Generation (generateKeys function)
+python
+Copy
+Edit
+def generateKeys():
+    p = 7919  # Prime number 1
+    q = 1009  # Prime number 2
+
+    n = p * q
+    phi = (p - 1) * (q - 1)
+
+    e = 0
+    for e in range(2, phi):
+        if gcd(e, phi) == 1:
+            break
+
+    d = modInverse(e, phi)
+
+    return e, d, n
+This function generates the public and private keys for RSA:
+
+Prime numbers p and q: These are two large prime numbers that are chosen to calculate n. In this example, p is 7919 and q is 1009.
+
+Modulus n: n is the product of p and q. This value is used in both the public and private keys.
+
+Euler’s Totient Function φ(n): φ(n) is computed as (p-1) * (q-1), which is used to find the private key.
+
+Public exponent e: This value is chosen such that 1 < e < φ(n) and gcd(e, φ(n)) == 1. The code loops through possible values of e until it finds one that satisfies this condition.
+
+Private exponent d: The value of d is computed using the modular inverse of e modulo φ(n).
+
+The generated keys are returned as:
+
+e (public exponent)
+
+d (private exponent)
+
+n (modulus)
+
+4. Greatest Common Divisor (gcd function)
+python
+Copy
+Edit
+def gcd(a, b):
+    while b != 0:
+        a, b = b, a % b
+    return a
+This function computes the greatest common divisor (GCD) of two numbers a and b using the Euclidean algorithm. The GCD is used to check if two numbers are coprime (i.e., their GCD is 1), which is an important step when selecting the public exponent e in the RSA algorithm.
+
+5. Encryption (encrypt function)
+python
+Copy
+Edit
+def encrypt(m, e, n):
+    return power(m, e, n)
+This function performs the encryption of a message m using the public key (e, n). The encryption process is simply computing the modular exponentiation of the message with the public exponent e and modulus n.
+
+The result C is the encrypted ciphertext.
+
+6. Decryption (decrypt function)
+python
+Copy
+Edit
+def decrypt(c, d, n):
+    return power(c, d, n)
+This function decrypts the ciphertext c using the private key (d, n). The decryption process is similar to encryption but uses the private exponent d instead of e.
+
+The result m is the decrypted message
+
+Assignment - 6
+Detailed Explanation of the Code
+This Python program demonstrates the Digital Signature Algorithm (DSA) using the pycryptodome library for cryptographic operations. It allows users to generate key pairs, sign messages, and verify signatures using DSA. Let's break it down step by step.
+
+1. Dependencies:
+The program uses the pycryptodome library, which is a cryptography package that provides various cryptographic functionalities, including key generation, hashing, and signing.
+
+The key modules used are:
+
+Crypto.PublicKey.DSA: Handles the DSA key generation and key import/export.
+
+Crypto.Hash.SHA256: Implements the SHA-256 hash function.
+
+Crypto.Signature.DSS: Implements the DSA signing and verification methods.
+
+Crypto.Random.get_random_bytes: Provides a secure random number generator for cryptographic operations.
+
+binascii: Used to convert binary data (like signatures) into readable hexadecimal format.
+
+2. Key Generation:
+Function generate_keys:
+
+This function generates a DSA key pair using the DSA.generate(2048) method, where 2048 is the bit-length of the keys (stronger security with larger key sizes).
+
+The generated keys are then exported using export_key(), which returns the private key and public key in a format that can be stored or transmitted.
+
+The function prints a success message and returns the private and public keys.
+
+python
+Copy
+Edit
+key = DSA.generate(2048)  # Generate a 2048-bit DSA key pair
+private_key = key.export_key()  # Export private key
+public_key = key.publickey().export_key()  # Export public key
+3. Signature Generation:
+Function generate_signature:
+
+This function signs a message using a private key.
+
+It first imports the private key using DSA.import_key(private_key).
+
+Then it creates a DSS.new signer object, which is used to sign the message.
+
+The message is hashed using SHA-256 (SHA256.new(message.encode())), which produces a fixed-length 256-bit digest of the message.
+
+The signer.sign(h) method signs the hash of the message, and the signature is returned in hexadecimal format for readability.
+
+python
+Copy
+Edit
+signer = DSS.new(key, 'fips-186-3')  # Standard DSS for signing
+h = SHA256.new(message.encode())  # Hash the message with SHA-256
+signature = signer.sign(h)  # Sign the hashed message
+4. Signature Verification:
+Function verify_signature:
+
+This function verifies the authenticity of a signature using the public key.
+
+It imports the public key using DSA.import_key(public_key).
+
+A DSS.new verifier object is created.
+
+The message is hashed again with SHA-256 and the signature is checked with verifier.verify(h, signature).
+
+If the verification is successful, it prints "Signature is valid", otherwise, it prints "Signature is invalid".
+
+python
+Copy
+Edit
+verifier = DSS.new(key, 'fips-186-3')  # Standard DSS for verification
+h = SHA256.new(message.encode())  # Hash the message with SHA-256
+verifier.verify(h, signature)  # Verify the signature
+5. Menu-Driven Program:
+Function menu:
+
+This function provides a menu for the user to interact with the program.
+
+The options allow users to:
+
+Generate a key pair (private and public keys).
+
+Sign a message with the private key.
+
+Verify the signature using the public key.
+
+Exit the program.
+
+The program ensures that the keys are generated before signing a message, and a message is signed before verifying the signature.
+
+If invalid input is provided, it prompts the user to take the correct action.
+
+6. Main Execution Block:
+The menu() function is called when the script is executed.
+
+This allows users to interact with the system and perform key generation, signing, and verification operations.
+
+SHA-256 Explained in Detail
+SHA-256 (Secure Hash Algorithm 256-bit) is a cryptographic hash function designed by the National Security Agency (NSA) as part of the SHA-2 family of hash functions. It is widely used in various security applications and protocols.
+
+Key Features of SHA-256:
+Fixed Output Length:
+
+Regardless of the size of the input, the output (hash) length is always 256 bits (32 bytes).
+
+This makes SHA-256 useful for verifying data integrity, as a hash of the original message will always produce the same length.
+
+Deterministic:
+
+The same input will always produce the same hash output, making it useful for data verification and comparison.
+
+Pre-image Resistance:
+
+Given a hash value, it is computationally infeasible to find the original input data that produced the hash. This property ensures that the hash is secure and not reversible.
+
+Collision Resistance:
+
+It is extremely unlikely that two different inputs will produce the same hash output. This makes SHA-256 resistant to hash collisions, ensuring the uniqueness of the hash.
+
+Efficient Computation:
+
+SHA-256 is computationally efficient, making it suitable for real-time applications like blockchain and digital signatures.
+
+Used in Digital Signatures:
+
+In digital signature algorithms like DSA and RSA, SHA-256 is used to hash the message before signing it. This ensures that the signature corresponds to the actual content of the message.
+
+SHA-256 Process:
+Message Padding:
+
+The input message is padded to make its length a multiple of 512 bits. Padding involves adding a 1 bit, followed by a series of 0 bits, and the length of the original message (in bits).
+
+Message Parsing:
+
+The padded message is broken into 512-bit blocks. Each block is processed sequentially.
+
+Initial Hash Values:
+
+SHA-256 uses eight initial hash values (constant values derived from the fractional parts of the square roots of the first eight prime numbers).
+
+Compression Function:
+
+Each 512-bit message block is processed by a series of bitwise operations, including logical functions (AND, OR, XOR) and modular additions. The result is fed into the next block.
+
+Final Hash Output:
+
+After processing all blocks, the final hash value is obtained by concatenating the eight intermediate hash values.
+
+In Python, SHA-256 is implemented as part of the hashlib library or through specialized libraries like pycryptodome for cryptographic applications.
+
+python
+Copy
+Edit
+from Crypto.Hash import SHA256
+
+h = SHA256.new(message.encode())  # Hash the message using SHA-256
+This generates the SHA-256 hash of the message, which is used in signing and verifying digital signatures.
+
+Summary:
+Key Generation: Generates a public-private key pair using DSA.
+
+Signature Generation: Signs a message with the private key using SHA-256.
+
+Signature Verification: Verifies the authenticity of a signature using the public key.
+
+SHA-256: A cryptographic hash function that produces a 256-bit hash from input data, ensuring data integrity and security in operations like digital signatures.
+
+This code demonstrates how digital signatures work and how SHA-25
